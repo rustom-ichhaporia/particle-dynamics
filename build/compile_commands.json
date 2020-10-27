@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/Users/rustomichhaporia/GitHub/Cinder/my-projects/ideal-gas-rustom-ichhaporia/build",
-  "command": "/usr/bin/clang++   -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk -o CMakeFiles/ideal-gas.dir/apps/main.cpp.o -c /Users/rustomichhaporia/GitHub/Cinder/my-projects/ideal-gas-rustom-ichhaporia/apps/main.cpp",
-  "file": "/Users/rustomichhaporia/GitHub/Cinder/my-projects/ideal-gas-rustom-ichhaporia/apps/main.cpp"
-}
-]
