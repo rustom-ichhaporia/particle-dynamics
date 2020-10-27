@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/rustomichhaporia/GitHub/Cinder/my-projects/ideal-gas-rustom-ichhaporia/apps/main.cpp
+iostream
+-
+cinder/gl/gl.h
+/Users/rustomichhaporia/GitHub/Cinder/my-projects/ideal-gas-rustom-ichhaporia/apps/cinder/gl/gl.h
+
