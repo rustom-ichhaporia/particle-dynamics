@@ -52,10 +52,12 @@ get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
 
 include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 
-list(APPEND CORE_SOURCE_FILES   apps/main.cpp)
+list(APPEND CORE_SOURCE_FILES   )#src/.cpp)
 
-list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
-                            )
+list(APPEND VISUALIZER_SOURCE_FILES  
+    src/visualizer/ideal_gas_visualizer.cc
+
+)
 
 list(APPEND TEST_FILES      tests/test_main.cc
                             tests/test_model.cc)
@@ -65,7 +67,7 @@ list(APPEND TEST_FILES      tests/test_main.cc
 ci_make_app(
         APP_NAME        ideal-gas-simulation
         CINDER_PATH     ${CINDER_PATH}
-        SOURCES         apps/main.cpp ${SOURCE_FILES}
+        SOURCES         apps/ideal_gas_visualizer_app.cpp ${SOURCE_FILES} ${VISUALIZER_SOURCE_FILES}
         INCLUDES        include
 )
 
