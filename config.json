@@ -1,0 +1,14 @@
+{
+  "window": {
+    "width": "1500", 
+    "height": "1000",
+    "margin": "100", 
+    "stroke": "5", 
+    "background color": "0x606060", 
+    "stroke color": "0x000000", 
+    "text color": "0xFFFFFF"
+  }, 
+  "container": {
+    "particle count": "10"
+  }
+}
