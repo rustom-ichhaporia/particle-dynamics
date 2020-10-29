@@ -10,6 +10,7 @@ using ci::Color;
 using idealgas::ParticleContainer;
 using ci::app::App;
 using ci::app::MouseEvent;
+using ci::app::KeyEvent;
 
 namespace idealgas {
 
@@ -24,7 +25,11 @@ class IdealGasVisualizer : public App {
   void mouseDown(MouseEvent event) override;
   void update() override;
   void draw() override;
+  void keyDown(KeyEvent event) override;
+
   void DrawContainer();
+  void DrawMessage();
+  void DrawParticles();
 
   size_t window_width_;
   size_t window_height_;
@@ -35,6 +40,7 @@ class IdealGasVisualizer : public App {
   Color background_color_;
   Color stroke_color_;
   Color text_color_;
+  string font_;
 
  private:
   ParticleContainer container_;

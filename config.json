@@ -6,9 +6,12 @@
     "stroke": "5", 
     "background color": "0x606060", 
     "stroke color": "0x000000", 
-    "text color": "0xFFFFFF"
+    "text color": "0xFFFFFF", 
+    "font": "IBM Plex Mono"
   }, 
   "container": {
-    "particle count": "10"
+    "particle count": "300", 
+    "max velocity": "10",
+    "max radius": "5"
   }
 }

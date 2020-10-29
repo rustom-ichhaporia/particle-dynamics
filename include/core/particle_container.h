@@ -22,7 +22,7 @@ class ParticleContainer {
  public:
   // ParticleContainer(size_t width, size_t height);
   unordered_map<string, string> ConfigureSizes();
-  // unordered_map<string, Color> ConfigureColors();
+  void Increment();
   vector<Particle> GetParticles();
 
   // Absolute path to config file (used because of relative path involves many
@@ -34,10 +34,13 @@ class ParticleContainer {
       "ideal-gas-rustom-ichhaporia/config.json";
 
   void InitializeParticles();
+  bool CheckWalls(size_t index);
 
   // The number of particles in the container at a given time
   size_t width_;
   size_t height_;
+  size_t max_velocity_;
+  size_t max_radius_;
 
   size_t particle_count_;
   vector<Particle> particles_;
