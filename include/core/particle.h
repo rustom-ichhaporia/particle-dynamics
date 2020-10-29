@@ -1,6 +1,8 @@
 #pragma once
 #include "cinder/gl/gl.h"
+#include <string>
 
+using std::string;
 using ci::ColorT;
 using glm::vec2;
 
@@ -8,23 +10,26 @@ namespace idealgas {
 
 class Particle {
  public:
-  Particle(const vec2& position, const vec2& velocity, double mass, double radius, const ColorT<float>& color);
+  Particle(const string& name, const vec2& position, const vec2& velocity, float mass, float radius, const ColorT<float>& color);
+  string GetName() const;
+  void SetName(const string& name);
   vec2 GetPosition() const;
   void SetPosition(const vec2& position);
   vec2 GetVelocity() const;
   void SetVelocity(const vec2& velocity);
-  double GetMass() const;
-  void SetMass(double mass);
-  double GetRadius() const;
-  void SetRadius(double radius);
+  float GetMass() const;
+  void SetMass(float mass);
+  float GetRadius() const;
+  void SetRadius(float radius);
   ColorT<float> GetColor() const;
   void SetColor(const ColorT<float>& color);
 
  private:
+  string name_;
   vec2 position_;
   vec2 velocity_;
-  double mass_;
-  double radius_;
+  float mass_;
+  float radius_;
   ColorT<float> color_;
 };
 

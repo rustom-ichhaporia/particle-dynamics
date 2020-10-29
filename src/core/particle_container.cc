@@ -19,6 +19,8 @@ using std::stoi;
 using std::vector;
 using std::map;
 using glm::vec2;
+using glm::distance;
+using glm::dot;
 using std::unordered_map;
 using std::uniform_int_distribution;
 using std::uniform_real_distribution;
@@ -26,6 +28,7 @@ using std::any;
 using std::mt19937;
 using ci::ColorT;
 using std::random_device;
+using std::pow;
 using std::sort;  
 
 namespace idealgas {
@@ -42,7 +45,9 @@ unordered_map<string, string> ParticleContainer::ConfigureSizes() {
 
   input >> config;
   particle_count_ = stoi(string(config["container"]["particle count"]));
+  min_velocity_ = stoi(string(config["container"]["min velocity"]));
   max_velocity_ = stoi(string(config["container"]["max velocity"]));
+  min_radius_ = stoi(string(config["container"]["min radius"]));
   max_radius_ = stoi(string(config["container"]["max radius"]));
 
   unordered_map<string, string> visualizer_info;
@@ -69,17 +74,27 @@ void ParticleContainer::Increment() {
          return lhs.GetPosition().x < rhs.GetPosition().x;
        });
 
-  for (size_t index = 0; index < particles_.size(); ++index) {// - max_radius_; ++index) {
-    if (CheckWalls(index)) {
-      particles_.at(index).SetColor(particles_.at(index).GetColor() * ColorT<float>(1, 0.8, 0.8));
+  for (size_t base = 0; base < particles_.size(); ++base) {
+    size_t cutoff = base + particles_.size() / max_radius_;
+    if (cutoff > particles_.size() - 1) {
+      cutoff = particles_.size();
     }
-    // for (size_t neighbor = index; neighbor < max_radius_ * 2; ++neighbor) {
-      particles_[index].SetPosition(particles_[index].GetPosition() + particles_[index].GetVelocity());
-    // }
+    for (size_t neighbor = base; neighbor < cutoff; ++neighbor) {
+      if (ExecuteCollision(base, neighbor)) {
+        particles_.at(base).SetColor(particles_.at(base).GetColor() * ColorT<float>(0.98, 0.98, 1));
+      }
+    }
+  }
+
+  for (size_t index = 0; index < particles_.size(); ++index) {
+    if (ExecuteWalls(index)) {
+      particles_.at(index).SetColor(particles_.at(index).GetColor() * ColorT<float>(1, 0.85, 0.85));
+    }      
+    particles_.at(index).SetPosition(particles_.at(index).GetPosition() + particles_.at(index).GetVelocity());
   }
 }
 
-vector<Particle> ParticleContainer::GetParticles() {
+vector<Particle>& ParticleContainer::GetParticles() {
   return particles_;
 }
 
@@ -88,15 +103,16 @@ void ParticleContainer::InitializeParticles() {
   mt19937 gen(rd()); //Gets random position from distribution
   uniform_int_distribution<> width_distribution(0, width_); // Distribution of possible x values
   uniform_int_distribution<> height_distribution(0, height_); // Distribution of y values
-  uniform_real_distribution<> velocity_distribution(0, max_velocity_);
+  uniform_real_distribution<> velocity_distribution(min_velocity_, max_velocity_);
+  uniform_real_distribution<> radius_distribution(min_radius_, max_radius_);
   
   for (size_t i = 0; i < particle_count_; ++i) {
-    particles_.push_back(Particle(vec2(width_distribution(gen), height_distribution(gen)), 
-        vec2(velocity_distribution(gen), velocity_distribution(gen)), 5, 5, ColorT<float>(1, 1, 1)));
+    particles_.push_back(Particle("empty", vec2(width_distribution(gen), height_distribution(gen)), 
+        vec2(velocity_distribution(gen), velocity_distribution(gen)), 5, radius_distribution(gen), ColorT<float>(1, 1, 1)));
   }
 }
 
-bool ParticleContainer::CheckWalls(size_t index) {
+bool ParticleContainer::ExecuteWalls(size_t index) {
   auto position = particles_.at(index).GetPosition();
   auto velocity = particles_.at(index).GetVelocity();
   auto radius = particles_.at(index).GetRadius();
@@ -113,6 +129,34 @@ bool ParticleContainer::CheckWalls(size_t index) {
     particles_.at(index).SetVelocity(velocity * vec2(1, -1));
   }
   return particles_.at(index).GetVelocity() != velocity;
+}
+
+bool ParticleContainer::ExecuteCollision(size_t base, size_t neighbor) {
+  auto p1 = particles_.at(base);
+  auto p2 = particles_.at(neighbor);
+  float distance_cutoff = p1.GetRadius() + p2.GetRadius();
+  vec2 x1 = p1.GetPosition();
+  vec2 x2 = p2.GetPosition();
+  vec2 v1 = p1.GetVelocity();
+  vec2 v2 = p2.GetVelocity();
+  float m1 = p1.GetMass();
+  float m2 = p2.GetMass();
+  float distance_between = distance(x1, x2);
+  float displacement_threshold = dot(v1 - v2, x1 - x2);
+
+  if (distance_between <= distance_cutoff && displacement_threshold < 0) {
+    float mass_term_1 = 2 * m2 / (m1 + m2);
+    vec2 interaction_term_1 = dot(v1 - v2, x1 - x2) / length(x1 - x2) / length(x1 - x2) * (x1 - x2);
+    vec2 new_velocity_1 = v1 - mass_term_1 * interaction_term_1;
+    particles_.at(base).SetVelocity(new_velocity_1);
+
+    float mass_term_2 = 2 * m1 / (m1 + m2);
+    vec2 interaction_term_2 = dot(v2 - v1, x2 - x1) / length(x2 - x1) / length(x2 - x1) * (x2 - x1);
+    vec2 new_velocity_2 = v2 - mass_term_2 * interaction_term_2;
+    particles_.at(neighbor).SetVelocity(new_velocity_2);
+    return true;
+  }
+  return false;
 }
 
 }  // namespace idealgas

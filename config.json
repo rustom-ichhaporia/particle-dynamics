@@ -11,7 +11,9 @@
   }, 
   "container": {
     "particle count": "300", 
-    "max velocity": "10",
-    "max radius": "5"
+    "min velocity": "1",
+    "max velocity": "2",
+    "min radius": "8",
+    "max radius": "25"
   }
 }

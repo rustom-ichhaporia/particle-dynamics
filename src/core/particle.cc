@@ -1,12 +1,19 @@
 #include "core/particle.h"
-// #include "cinder/gl/gl.h"
 
 using ci::ColorT;
 
 namespace idealgas {
 
-Particle::Particle(const vec2& position, const vec2& velocity, double mass, double radius, const ColorT<float>& color)
-    : position_(position), velocity_(velocity), mass_(mass), radius_(radius), color_(color) {
+Particle::Particle(const string& name, const vec2& position, const vec2& velocity, float mass, float radius, const ColorT<float>& color)
+    : name_(name), position_(position), velocity_(velocity), mass_(mass), radius_(radius), color_(color) {
+}
+
+string Particle::GetName() const {
+  return name_;
+}
+
+void Particle::SetName(const string& name) {
+  name_ = name;
 }
 
 vec2 Particle::GetPosition() const {
@@ -25,19 +32,19 @@ void Particle::SetVelocity(const vec2& velocity) {
   velocity_ = velocity;
 }
 
-double Particle::GetMass() const {
+float Particle::GetMass() const {
   return mass_;
 }
 
-void Particle::SetMass(double mass) {
+void Particle::SetMass(float mass) {
   mass_ = mass;
 }
 
-double Particle::GetRadius() const {
+float Particle::GetRadius() const {
   return radius_;
 }
 
-void Particle::SetRadius(double radius) {
+void Particle::SetRadius(float radius) {
   radius_ = radius;
 }
 

@@ -1,5 +1,4 @@
 #include "visualizer/ideal_gas_visualizer.h"
-
 #include "core/particle.h"
 #include "core/particle_container.h"
 
@@ -67,14 +66,29 @@ void IdealGasVisualizer::draw() {
 
 void IdealGasVisualizer::keyDown(KeyEvent event) {
   switch (event.getCode()) {
-    // case ci::app::KeyEvent::KEY_RETURN: {
-    //   current_prediction_ = model_.Predict(sketchpad_.GetShades());
-
-    //   break;
-    // }
-    case ci::app::KeyEvent::KEY_DELETE:
-      // sketchpad_.Clear();
+    case KeyEvent::KEY_DOWN: {
+      for (auto& particle : container_.GetParticles()) {
+        particle.SetVelocity(particle.GetVelocity() * vec2(0.90, 0.90));
+      }
       break;
+    }
+    case KeyEvent::KEY_UP: {
+      for (auto& particle : container_.GetParticles()) {
+        particle.SetVelocity(particle.GetVelocity() * vec2(1.1, 1.1));
+      }
+      break;
+    }
+    case KeyEvent::KEY_LEFT: {
+      for (auto& particle : container_.GetParticles()) {
+        particle.SetRadius(particle.GetRadius() * 0.9);
+      }
+      break;
+    }
+    case KeyEvent::KEY_RIGHT: {
+      for (auto& particle : container_.GetParticles()) {
+        particle.SetRadius(particle.GetRadius() * 1.1);
+      }
+    }
   }
 }
 
@@ -93,7 +107,7 @@ void IdealGasVisualizer::DrawContainer() {
 }
 
 void IdealGasVisualizer::DrawMessage() {
-  drawStringCentered("Press Delete to restart the simulation. ",
+  drawStringCentered("Press the up arrow to speed up the particles. Press the down arrow to slow them down.",
                      vec2(window_width_ / 2, window_height_ - margin_ / 2),
                      text_color_, Font(font_, margin_ / 4));
 }
