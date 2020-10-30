@@ -54,6 +54,7 @@ include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 list(APPEND CORE_SOURCE_FILES   
     src/core/particle_container.cc
     src/core/particle.cc
+    src/core/histogram.cc
 )
 
 list(APPEND VISUALIZER_SOURCE_FILES  
@@ -87,7 +88,7 @@ ci_make_app(
 # )
 # add_library(ideal-gas-visualizer nlohmann_json::nlohmann_json)
 
-target_include_directories(ideal-gas-visualizer PRIVATE include)#; nlohmann_json::nlohmann_json_cmake_fetchcontent)#nlohmann_json::nlohmann_json)
+# target_include_directories(ideal-gas-visualizer PRIVATE include)#; nlohmann_json::nlohmann_json_cmake_fetchcontent)#nlohmann_json::nlohmann_json)
 # target_link_libraries(ideal-gas-visualizer PRIVATE nlohmann_json::nlohmann_json)
 
 

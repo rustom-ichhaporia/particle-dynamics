@@ -1,19 +1,49 @@
 {
   "window": {
-    "width": "1500", 
-    "height": "1000",
-    "margin": "100", 
-    "stroke": "5", 
-    "background color": "0x606060", 
-    "stroke color": "0x000000", 
-    "text color": "0xFFFFFF", 
+    "width": "1792",
+    "height": "1066",
+    "margin": "100",
+    "stroke": "5",
+    "background color": "0x606060",
+    "stroke color": "0x000000",
+    "text color": "0xFFFFFF",
     "font": "IBM Plex Mono"
-  }, 
+  },
+  "histogram": {
+    "bin count": "10"
+  },
   "container": {
-    "particle count": "300", 
-    "min velocity": "1",
-    "max velocity": "2",
-    "min radius": "8",
-    "max radius": "25"
+    "particles": {
+      "Big, Heavy Particle": {
+        "particle count": 10, 
+        "min velocity": 10, 
+        "max velocity": 15, 
+        "min mass": 500, 
+        "max mass": 600,
+        "min radius": 50, 
+        "max radius": 50, 
+        "color": "0xFFFFFF"
+      },
+      "Medium, Medium Particle": {
+        "particle count": 20, 
+        "min velocity": 10, 
+        "max velocity": 15, 
+        "min mass": 10, 
+        "max mass": 10,
+        "min radius": 20, 
+        "max radius": 20, 
+        "color": "0xFFFFFF"
+      }, 
+      "Tiny, Speedy Particle": {
+        "particle count": 40, 
+        "min velocity": 2, 
+        "max velocity": 10, 
+        "min mass": 2, 
+        "max mass": 2, 
+        "min radius": 10, 
+        "max radius": 10, 
+        "color": "0xFFFFFF"
+      }
+    }
   }
 }

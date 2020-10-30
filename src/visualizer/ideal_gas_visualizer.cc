@@ -1,6 +1,7 @@
 #include "visualizer/ideal_gas_visualizer.h"
 #include "core/particle.h"
 #include "core/particle_container.h"
+#include "core/histogram.h"
 
 using ci::Color;
 using ci::ColorT;
@@ -8,14 +9,15 @@ using ci::Font;
 using ci::Rectf;
 using ci::app::setWindowPos;
 using ci::app::setWindowSize;
+using ci::app::setFullScreen;
 using ci::gl::clear;
 using ci::gl::color;
 using ci::gl::drawStringCentered;
 using ci::gl::drawStrokedRect;
 using glm::vec2;
+using idealgas::Histogram;
 using idealgas::Particle;
 using idealgas::ParticleContainer;
-using std::any_cast;
 using std::stoi;
 using std::stoull;
 using std::uint32_t;
@@ -33,8 +35,9 @@ IdealGasVisualizer::IdealGasVisualizer() {
   stroke_ = stoi(size_config["stroke"]);
   
   // Set box width and height to appropriate margins (not a magic number)
-  box_width_ = window_width_ - 2 * margin_;
-  box_height_ = window_height_ - 2 * margin_;
+  container_width_ = stoi(size_config["container width"]);
+  container_height_ = stoi(size_config["container height"]);
+  histogram_bin_count_ = stoi(size_config["histogram bin count"]);
 
   // Set draw colors
   background_color_ = ColorT<float>().hex(uint32_t(stoull(size_config["background color"], 0, 16))); 
@@ -47,6 +50,14 @@ void IdealGasVisualizer::setup() {
   // window_width_ = 1500;
   setWindowSize(window_width_, window_height_);
   setWindowPos(0, 0);
+  // setFullScreen(true);
+  
+  size_t num_particle_types = container_.GetParticleNames().size();
+  for (size_t index = 0; index < num_particle_types; ++index) {
+    string name = container_.GetParticleNames().at(index); // margin_ * (index * 2 + 1)
+    Histogram hist(name, histogram_bin_count_, margin_ * 3, container_height_ / num_particle_types, vec2(container_width_ + 2 * margin_, margin_ + index * (container_height_ / num_particle_types)), stroke_, stroke_color_, text_color_, text_color_, font_);
+    histograms_.insert({{name, hist}});
+  }
 }
 
 void IdealGasVisualizer::mouseDown(MouseEvent event) {
@@ -54,6 +65,7 @@ void IdealGasVisualizer::mouseDown(MouseEvent event) {
 
 void IdealGasVisualizer::update() {
   container_.Increment();
+  UpdateHistograms();
 }
 
 void IdealGasVisualizer::draw() {
@@ -62,6 +74,8 @@ void IdealGasVisualizer::draw() {
   DrawMessage();
 
   DrawParticles();
+
+  DrawHistograms();
 }
 
 void IdealGasVisualizer::keyDown(KeyEvent event) {
@@ -97,8 +111,7 @@ void IdealGasVisualizer::DrawContainer() {
 
   vec2 pixel_top_left = vec2(margin_, margin_);
 
-  vec2 pixel_bottom_right =
-      vec2(window_width_ - margin_, window_height_ - margin_);
+  vec2 pixel_bottom_right = pixel_top_left + vec2(container_width_, container_height_);
 
   Rectf pixel_bounding_box(pixel_top_left, pixel_bottom_right);
 
@@ -107,7 +120,7 @@ void IdealGasVisualizer::DrawContainer() {
 }
 
 void IdealGasVisualizer::DrawMessage() {
-  drawStringCentered("Press the up arrow to speed up the particles. Press the down arrow to slow them down.",
+  drawStringCentered("Press the arrow keys to change the particle sizes and speeds.",
                      vec2(window_width_ / 2, window_height_ - margin_ / 2),
                      text_color_, Font(font_, margin_ / 4));
 }
@@ -117,6 +130,20 @@ void IdealGasVisualizer::DrawParticles() {
   for (auto particle : particles) { 
     color(particle.GetColor());
     drawSolidCircle(vec2(margin_, margin_) + particle.GetPosition(), particle.GetRadius());
+  }
+}
+
+void IdealGasVisualizer::UpdateHistograms() {
+  for (auto& particle : container_.GetParticles()) {
+    string name = particle.GetName(); 
+    float speed = length(particle.GetVelocity());
+    histograms_.at(name).Update(speed);
+  }
+}
+
+void IdealGasVisualizer::DrawHistograms() {
+  for (auto& hist : histograms_) {
+    hist.second.Draw();
   }
 }
 
