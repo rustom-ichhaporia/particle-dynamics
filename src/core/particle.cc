@@ -4,8 +4,16 @@ using ci::ColorT;
 
 namespace idealgas {
 
-Particle::Particle(const string& name, const vec2& position, const vec2& velocity, float mass, float radius, const ColorT<float>& color)
-    : name_(name), position_(position), velocity_(velocity), mass_(mass), radius_(radius), color_(color) {
+Particle::Particle(const string& name, const vec2& position,
+                   const vec2& velocity, float mass, float radius,
+                   const ColorT<float>& color)
+    // Use initializer list to fill private variables
+    : name_(name),
+      position_(position),
+      velocity_(velocity),
+      mass_(mass),
+      radius_(radius),
+      color_(color) {
 }
 
 string Particle::GetName() const {

@@ -59,11 +59,11 @@ list(APPEND CORE_SOURCE_FILES
 
 list(APPEND VISUALIZER_SOURCE_FILES  
     src/visualizer/ideal_gas_visualizer.cc
-
 )
 
 list(APPEND TEST_FILES      tests/test_main.cc
-                            tests/test_model.cc)
+                            tests/test_particle_container.cc
+                            tests/test_histogram.cc)
 
 ci_make_app(
         APP_NAME        ideal-gas-visualizer
