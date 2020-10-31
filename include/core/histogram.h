@@ -21,13 +21,17 @@ class Histogram {
   void Draw();
   void DrawFrame();
   void DrawText();
-  void DrawBins(vector<float> bin_heights);
+  void DrawBins();
   void Update(float speed);
 
  private:
-  vector<float> CalculateNormalizedBins();
+  void CalculateNormalizedBins();
 
   vector<float> speeds_;
+
+  vector<size_t> bin_cutoffs_;
+
+  vector<float> bin_heights_;
 
   string title_;
   size_t bin_count_;
@@ -39,6 +43,10 @@ class Histogram {
   ColorT<float> bar_color_;
   ColorT<float> text_color_;
   string font_;
+
+  vec2 graph_offset_;
+  size_t graph_width_;
+  size_t bin_width_;
 };
 
 }

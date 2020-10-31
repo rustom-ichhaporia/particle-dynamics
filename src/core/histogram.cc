@@ -14,6 +14,8 @@ using ci::gl::color;
 using ci::Font;
 using idealgas::Histogram;
 using ci::gl::drawStringCentered;
+using ci::gl::drawString;
+using ci::gl::drawStringRight;
 using std::begin;
 using std::accumulate;
 using std::sort;
@@ -21,6 +23,7 @@ using std::end;
 using std::max_element;
 using std::min_element;
 using ci::gl::drawSolidRoundedRect;
+using std::to_string;
 
 namespace idealgas {
 
@@ -28,11 +31,14 @@ Histogram::Histogram(const string& title, size_t bin_count, size_t width, size_t
 }
 
 void Histogram::Draw() {
+  CalculateNormalizedBins();
+
   DrawFrame();
 
-  DrawText();
 
-  DrawBins(CalculateNormalizedBins());
+  DrawBins();
+    DrawText();
+
 }
 
 void Histogram::DrawFrame() {
@@ -47,22 +53,51 @@ void Histogram::DrawFrame() {
 }
 
 void Histogram::DrawText() {
+  graph_offset_ = offset_ + vec2(stroke_ / 2, 0) + vec2(width_ / 10, 0);
+  graph_width_ = width_ * 8.5 / 10; 
+  bin_width_ = graph_width_ / bin_count_;
+
   drawStringCentered(title_, offset_ + 
-                     vec2(width_ / 2, height_ * 9 / 10),
+                     vec2(width_ / 2, height_ * 9.3 / 10),
                      text_color_, Font(font_, height_ / 20));
+
+  // for (size_t cutoff = 0; cutoff < bin_cutoffs_.size(); ++cutoff) {
+  //   drawString(to_string(bin_cutoffs_.at(cutoff)), graph_offset_ + vec2(bin_width_ * cutoff, height_ * 8.5 / 10), text_color_, Font(font_, height_ / 20));
+  // }
+  sort(bin_heights_.begin(), bin_heights_.end());
+
+  drawString(to_string((int)bin_heights_.front()), graph_offset_ + vec2(-(int)stroke_ * 2, height_ * 0.8), text_color_, Font(font_, height_ / 25));
+  
+  drawString(to_string((int)bin_heights_.back()), graph_offset_ + vec2(-(int)stroke_ * 2, height_ * 0.05), text_color_, Font(font_, height_ / 25));
+  drawString(to_string(((int)bin_heights_.front() + (int)bin_heights_.back()) / 2), graph_offset_ + vec2(-(int)stroke_ * 2, height_ * 0.45), text_color_, Font(font_, height_ / 25));
+
+
+  drawString(to_string(bin_cutoffs_.front()), graph_offset_ + vec2(stroke_, height_ * 0.85), text_color_, Font(font_, height_ / 25));
+
+  drawString(to_string((bin_cutoffs_.front() + bin_cutoffs_.back()) / 2), graph_offset_ + vec2(graph_width_ / 2,  height_ * 8.5 / 10), text_color_, Font(font_, height_ / 25));
+
+  drawStringRight(to_string(bin_cutoffs_.back()), graph_offset_ + vec2(graph_width_, height_ * 0.85), text_color_, Font(font_, height_ / 25));
+
+  drawStringCentered("x = Speed, y = Frequency", graph_offset_ + vec2(graph_width_ / 2, height_ * 0.025), text_color_, Font(font_, height_ / 25));
 }
 
-void Histogram::DrawBins(vector<float> bin_heights) {
+void Histogram::DrawBins() {
   size_t max_bar_height = height_ * 8 / 10;
   color(bar_color_);
-  size_t bin_width = width_ / bin_count_;
 
-  for (size_t bin = 0; bin < bin_count_; ++bin) {
-    // size_t average_speed = accumulate(speeds_.begin(), speeds_.end(), 0);
-    size_t proportional_height = bin_heights.at(bin) * max_bar_height;
-    // size_t bar_height = average_speed / max_speed / max_bar_height;
-    vec2 top_left = offset_ + vec2(bin * bin_width, max_bar_height - proportional_height);
-    vec2 bottom_right = offset_ + vec2((bin + 1) * bin_width, max_bar_height);
+  for (size_t bin = 0; bin < bin_heights_.size(); ++bin) {
+    size_t proportional_height = bin_heights_.at(bin) * max_bar_height;
+    
+    vec2 top_left;
+    
+    if (max_bar_height + stroke_ < max_bar_height - proportional_height + stroke_ * 3) {
+      top_left = graph_offset_ + vec2(bin * bin_width_, max_bar_height - proportional_height);
+    } else {
+      top_left = graph_offset_ + vec2(bin * bin_width_, max_bar_height - proportional_height + stroke_ * 3);
+    }
+
+    vec2 bottom_right = graph_offset_ + vec2((bin + 1) * bin_width_, max_bar_height + stroke_);
+
     Rectf bounding_box(top_left, bottom_right);
     drawSolidRoundedRect(bounding_box, 1);
   }
@@ -72,29 +107,28 @@ void Histogram::Update(float speed) {
   speeds_.push_back(speed);
 }
 
-vector<float> Histogram::CalculateNormalizedBins() {
+void Histogram::CalculateNormalizedBins() {
+  bin_heights_.clear();
+  bin_cutoffs_.clear();
+
   sort(speeds_.begin(), speeds_.end());
 
-  float smallest_speed = speeds_.front();//*min_element(bin_heights.begin(), bin_heights.end());
-  float highest_speed = speeds_.back();
+  float min_speed = speeds_.front();//*min_element(bin_heights.begin(), bin_heights.end());
+  float max_speed = speeds_.back();
 
-
-
-  // float bin_width = speeds_.size() / bin_count_;
-
-  vector<float> bin_heights;
-
-  size_t bin_increment = (highest_speed - smallest_speed) / bin_count_;
-  size_t bin_cutoff = bin_increment;
+  float bin_increment = (max_speed - min_speed) / bin_count_;
+  float bin_cutoff = bin_increment;
 
   float sum = 0;
   for (size_t begin = 0; begin < speeds_.size(); ++begin) {
-    if (speeds_.at(begin) < bin_cutoff) {
+    if (speeds_.at(begin) < min_speed + bin_cutoff) {
       sum += 1;
     } else {
-      bin_heights.push_back(sum);
+      bin_cutoffs_.push_back(bin_cutoff);
+      bin_heights_.push_back(sum);
       sum = 0;
       bin_cutoff += bin_increment;
+      --begin;
     }
   }
   // bin_heights.push_back(sum);
@@ -113,13 +147,12 @@ vector<float> Histogram::CalculateNormalizedBins() {
   //   bin_heights.push_back(sum / bin_width);
   // }
 
-  float max_bin = *max_element(bin_heights.begin(), bin_heights.end());
+  float max_bin = *max_element(bin_heights_.begin(), bin_heights_.end());
 
-  for (size_t index = 0; index < bin_heights.size(); ++index) {
-    bin_heights.at(index) /= max_bin;
+  for (size_t index = 0; index < bin_heights_.size(); ++index) {
+    bin_heights_.at(index) /= max_bin;
   }
 
-  return bin_heights;
 }
 
 }

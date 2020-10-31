@@ -3,7 +3,7 @@
     "width": "1792",
     "height": "1066",
     "margin": "100",
-    "stroke": "5",
+    "stroke": "6",
     "background color": "0x606060",
     "stroke color": "0x000000",
     "text color": "0xFFFFFF",
@@ -16,8 +16,8 @@
     "particles": {
       "Big, Heavy Particle": {
         "particle count": 10, 
-        "min velocity": 10, 
-        "max velocity": 15, 
+        "min velocity": 2, 
+        "max velocity": 3, 
         "min mass": 500, 
         "max mass": 600,
         "min radius": 50, 
@@ -26,8 +26,8 @@
       },
       "Medium, Medium Particle": {
         "particle count": 20, 
-        "min velocity": 10, 
-        "max velocity": 15, 
+        "min velocity": 2, 
+        "max velocity": 3, 
         "min mass": 10, 
         "max mass": 10,
         "min radius": 20, 
@@ -37,7 +37,7 @@
       "Tiny, Speedy Particle": {
         "particle count": 40, 
         "min velocity": 2, 
-        "max velocity": 10, 
+        "max velocity": 3, 
         "min mass": 2, 
         "max mass": 2, 
         "min radius": 10, 

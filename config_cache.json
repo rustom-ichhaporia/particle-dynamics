@@ -12,7 +12,7 @@
       "Tiny, Speedy Particle": {
         "particle count": 100, 
         "min velocity": 2, 
-        "max velocity": 10, 
+        "max velocity": 2, 
         "min mass": 2, 
         "max mass": 2, 
         "min radius": 10, 
@@ -21,8 +21,8 @@
       }, 
       "Surprise Particle": {
         "particle count": 1, 
-        "min velocity": 1, 
-        "max velocity": 5, 
+        "min velocity": 0, 
+        "max velocity": 0, 
         "min mass": 1000, 
         "max mass": 1000, 
         "min radius": 90, 

@@ -55,7 +55,10 @@ void IdealGasVisualizer::setup() {
   size_t num_particle_types = container_.GetParticleNames().size();
   for (size_t index = 0; index < num_particle_types; ++index) {
     string name = container_.GetParticleNames().at(index); // margin_ * (index * 2 + 1)
-    Histogram hist(name, histogram_bin_count_, margin_ * 3, container_height_ / num_particle_types, vec2(container_width_ + 2 * margin_, margin_ + index * (container_height_ / num_particle_types)), stroke_, stroke_color_, text_color_, text_color_, font_);
+    Histogram hist(
+        name, histogram_bin_count_, margin_ * 3, container_height_ / num_particle_types,
+        vec2(container_width_ + 2 * margin_, margin_ + index * (container_height_ / num_particle_types)),
+        stroke_, stroke_color_, text_color_, text_color_, font_);
     histograms_.insert({{name, hist}});
   }
 }
