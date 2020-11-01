@@ -92,6 +92,8 @@ class IdealGasVisualizer : public App {
    */
   void DrawHistograms();
 
+  // Path to the configuration file
+  string config_path_ = "../../../../../../config/visualizer/config.json";
   // The pixel wixth of the window
   size_t window_width_;
   // The pixel height of the window

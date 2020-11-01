@@ -25,34 +25,7 @@ class ParticleContainer {
    * @return unordered_map<string, string> with key variable name and value of
    * corresponding variable
    */
-  unordered_map<string, string> ConfigureSizes();
-
-  /**
-   * @brief Increments the positions and velocities all of the particles in the
-   * container by one time "step".
-   *
-   */
-  void Increment();
-
-  /**
-   * @brief Gets a reference to the vector of particles in the container.
-   *
-   * @return vector<Particle>& the vector of particles in the container
-   */
-  vector<Particle>& GetParticles();
-  vector<string>& GetParticleNames();
-
- private:
-  // Absolute path to config file (used because of relative path involves many
-  // steps from debug directory, non const by design)
-  string kConfigPath =
-      "/Users/rustomichhaporia/GitHub/Cinder/my-projects/"
-      "ideal-gas-rustom-ichhaporia/config.json";
-
-  // The maximum allowed radius of a particle
-  const size_t kRadiusLimit = 100;
-  // The nearby particle limit for checking for collisions
-  const size_t kNearbyLimit = 10;
+  unordered_map<string, string> Configure(const string& config_path);
 
   /**
    * @brief Initializes a set of particles of a given type by creating them with
@@ -75,14 +48,50 @@ class ParticleContainer {
                            size_t max_radius, const ColorT<float>& color);
 
   /**
-   * @brief Alters a given particle's velocity as required if they are close to
-   * a wall.
+   * @brief Initializes a particle in the container.
    *
-   * @param index the index of the particle to check for wall collisions
-   * @return true when a collision has occurred
-   * @return false when a collision has not occurred
+   * @param particle the reference particle to add
    */
-  bool ExecuteWallCollision(size_t index);
+  void InitializeParticle(const Particle& particle);
+
+  /**
+   * @brief Increments the positions and velocities all of the particles in the
+   * container by one time "step".
+   *
+   */
+  void Increment();
+
+  /**
+   * @brief Gets a reference to the vector of particles in the container.
+   *
+   * @return vector<Particle>& the vector of particles in the container
+   */
+  vector<Particle> GetParticles() const; 
+
+  /**
+   * @brief Gets a reference to a vector of the particle type names.
+   *
+   * @return the vector of particle type strings
+   */
+  vector<string> GetParticleNames() const;
+
+ private:
+  // The maximum allowed radius of a particle
+  const size_t kRadiusLimit = 100;
+  // The nearby particle limit for checking for collisions
+  const size_t kNearbyLimit = 10;
+
+  /**
+   * @brief Checks and executes all collisions between particles.
+   *
+   */
+  void IncrementParticleCollisions();
+
+  /**
+   * @brief Checks and executes all collisions between particles and a wall.
+   *
+   */
+  void IncrementWallCollisions();
 
   /**
    * @brief Alters two given particles' velocities as required if they are close
@@ -94,15 +103,23 @@ class ParticleContainer {
    * @return false when a collision has occurred
    */
   bool ExecuteParticleCollision(size_t base, size_t neighbor);
-
-  void IncrementParticleCollisions();
-
-  void IncrementWallCollisions();
+  
+  /**
+   * @brief Alters a given particle's velocity as required if they are close to
+   * a wall.
+   *
+   * @param index the index of the particle to check for wall collisions
+   * @return true when a collision has occurred
+   * @return false when a collision has not occurred
+   */
+  bool ExecuteWallCollision(size_t index);
 
   // A vector of all the particles in the container
   vector<Particle> particles_;
   // A vector of the names of particle types
   vector<string> particle_names_;
+  // The time step for particle incrementing
+  float time_step_ = 1;
   // The pixel width of the container
   size_t width_;
   // The pixel height of the container

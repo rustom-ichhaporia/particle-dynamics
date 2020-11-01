@@ -11,6 +11,8 @@ namespace idealgas {
 
 class Particle {
  public:
+  Particle();
+
   /**
    * @brief Constructs a particle with the given parameters.
    *

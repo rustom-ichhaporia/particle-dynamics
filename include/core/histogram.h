@@ -18,14 +18,21 @@ namespace idealgas {
 class Histogram {
  public:
   /**
+   * @brief Short constructor for non-plotted histogram. 
+   * 
+   * @param title the string title of the histogram
+   * @param bin_count the number of bins in the histogram
+   */
+  Histogram(const string& title, size_t bin_count);
+
+  /**
    * @brief Constructs a new Histogram object.
    *
    * @param title the title of the plot
    * @param bin_count the number of bins in the histogram
    * @param width the width of the plot
    * @param height the height of the plot
-   * @param offset the vec2 offset from the origin of the upper left of the
-   * histogram
+   * @param offset the vec2 offset from the origin 
    * @param stroke the width of the stroke of the histogram's lines
    * @param stroke_color the color of the histogram's lines
    * @param bar_color the color of the histogram's bars
@@ -51,6 +58,26 @@ class Histogram {
    */
   void Update(float value);
 
+  /**
+   * @brief Calculates the normalized frequencies of different speeds,
+   * representing by bin heights.
+   *
+   */
+  void CalculateFrequencies();
+
+  /**
+   * @brief Normalizes the size of each bin height for graphing. 
+   * 
+   */
+  void NormalizeBins();
+
+  /**
+   * @brief Returns the heights of the histogram's bins. 
+   * 
+   * @return vector<float> of the relative heights for all the bins
+   */
+  vector<float> GetBinHeights() const;
+
  private:
   /**
    * @brief Draws the frame of the histogram.
@@ -70,24 +97,12 @@ class Histogram {
    */
   void DrawBins();
 
-  /**
-   * @brief Calculates the normalized frequencies of different speeds,
-   * representing by bin heights.
-   *
-   */
-  void CalculateFrequencies();
-
-  /**
-   * @brief Normalizes the size of each bin height for graphing. 
-   * 
-   */
-  void NormalizeBins();
 
   // The values from which to construct the histogram
   vector<float> values_;
   // The evenly spaced upper cutoffs for each bin, ranging from minimum to
   // maximum value
-  vector<size_t> bin_cutoffs_;
+  vector<float> bin_cutoffs_;
   // The relative bin heights to be graphed
   vector<float> bin_heights_;
 

@@ -37,9 +37,9 @@ using std::vector;
 
 namespace idealgas {
 
-unordered_map<string, string> ParticleContainer::ConfigureSizes() {
+unordered_map<string, string> ParticleContainer::Configure(const string& config_path) {
   // Read in JSON configuration file information
-  ifstream input(kConfigPath);
+  ifstream input(config_path);
   json config;
   input >> config;
 
@@ -83,20 +83,6 @@ unordered_map<string, string> ParticleContainer::ConfigureSizes() {
   return visualizer_info;
 }
 
-void ParticleContainer::Increment() {
-  IncrementParticleCollisions();
-
-  IncrementWallCollisions();
-}
-
-vector<Particle>& ParticleContainer::GetParticles() {
-  return particles_;
-}
-
-vector<string>& ParticleContainer::GetParticleNames() {
-  return particle_names_;
-}
-
 void ParticleContainer::InitializeParticles(
     const string& name, size_t particle_count, size_t min_velocity,
     size_t max_velocity, size_t min_mass, size_t max_mass, size_t min_radius,
@@ -131,58 +117,23 @@ void ParticleContainer::InitializeParticles(
   }
 }
 
-bool ParticleContainer::ExecuteWallCollision(size_t index) {
-  auto position = particles_.at(index).GetPosition();
-  auto velocity = particles_.at(index).GetVelocity();
-  auto radius = particles_.at(index).GetRadius();
-
-  // Check each of the four walls for near or close collision and reverse velocity as necessary
-  if (position.x <= radius && velocity.x < 0) {
-    particles_.at(index).SetVelocity(velocity * vec2(-1, 1));
-  }
-  if (position.x >= width_ - radius && velocity.x > 0) {
-    particles_.at(index).SetVelocity(velocity * vec2(-1, 1));
-  }
-  if (position.y <= radius && velocity.y < 0) {
-    particles_.at(index).SetVelocity(velocity * vec2(1, -1));
-  }
-  if (position.y >= height_ - radius && velocity.y > 0) {
-    particles_.at(index).SetVelocity(velocity * vec2(1, -1));
-  }
-  return particles_.at(index).GetVelocity() != velocity;
+void ParticleContainer::InitializeParticle(const Particle& particle) {
+  // Add singular particle
+  particles_.push_back(particle);
 }
 
-bool ParticleContainer::ExecuteParticleCollision(size_t base, size_t neighbor) {
-  auto p1 = particles_.at(base);
-  auto p2 = particles_.at(neighbor);
-  float distance_cutoff = p1.GetRadius() + p2.GetRadius();
-  vec2 x1 = p1.GetPosition();
-  vec2 x2 = p2.GetPosition();
-  vec2 v1 = p1.GetVelocity();
-  vec2 v2 = p2.GetVelocity();
-  float m1 = p1.GetMass();
-  float m2 = p2.GetMass();
-  float distance_between = distance(x1, x2);
-  float displacement_threshold = dot(v1 - v2, x1 - x2);
+void ParticleContainer::Increment() {
+  IncrementParticleCollisions();
 
-  // Use directional check to ensure that particles won't get stuck or frozen
-  if (distance_between <= distance_cutoff && displacement_threshold < 0) {
-    // Calculate new velocity for p1
-    float mass_term_1 = 2 * m2 / (m1 + m2);
-    vec2 interaction_term_1 =
-        dot(v1 - v2, x1 - x2) / length(x1 - x2) / length(x1 - x2) * (x1 - x2);
-    vec2 new_velocity_1 = v1 - mass_term_1 * interaction_term_1;
-    particles_.at(base).SetVelocity(new_velocity_1);
+  IncrementWallCollisions();
+}
 
-    // Calculate new velocity for p2
-    float mass_term_2 = 2 * m1 / (m1 + m2);
-    vec2 interaction_term_2 =
-        dot(v2 - v1, x2 - x1) / length(x2 - x1) / length(x2 - x1) * (x2 - x1);
-    vec2 new_velocity_2 = v2 - mass_term_2 * interaction_term_2;
-    particles_.at(neighbor).SetVelocity(new_velocity_2);
-    return true;
-  }
-  return false;
+vector<Particle> ParticleContainer::GetParticles() const {
+  return particles_;
+}
+
+vector<string> ParticleContainer::GetParticleNames() const {
+  return particle_names_;
 }
 
 void ParticleContainer::IncrementParticleCollisions() {
@@ -219,8 +170,62 @@ void ParticleContainer::IncrementWallCollisions() {
     }
     // Increment particle position based on velocity
     particles_.at(index).SetPosition(particles_.at(index).GetPosition() +
-                                     particles_.at(index).GetVelocity());
+                                     time_step_ * particles_.at(index).GetVelocity());
   }
+}
+
+bool ParticleContainer::ExecuteParticleCollision(size_t base, size_t neighbor) {
+  auto p1 = particles_.at(base);
+  auto p2 = particles_.at(neighbor);
+  float distance_cutoff = p1.GetRadius() + p2.GetRadius();
+  vec2 x1 = p1.GetPosition();
+  vec2 x2 = p2.GetPosition();
+  vec2 v1 = p1.GetVelocity();
+  vec2 v2 = p2.GetVelocity();
+  float m1 = p1.GetMass();
+  float m2 = p2.GetMass();
+  float distance_between = distance(x1, x2);
+  float displacement_threshold = dot(v1 - v2, x1 - x2);
+
+  // Use directional check to ensure that particles won't get stuck or frozen
+  if (distance_between <= distance_cutoff && displacement_threshold < 0) {
+    // Calculate new velocity for p1
+    float mass_term_1 = 2 * m2 / (m1 + m2);
+    vec2 interaction_term_1 =
+        dot(v1 - v2, x1 - x2) / length(x1 - x2) / length(x1 - x2) * (x1 - x2);
+    vec2 new_velocity_1 = v1 - mass_term_1 * interaction_term_1;
+    particles_.at(base).SetVelocity(new_velocity_1);
+
+    // Calculate new velocity for p2
+    float mass_term_2 = 2 * m1 / (m1 + m2);
+    vec2 interaction_term_2 =
+        dot(v2 - v1, x2 - x1) / length(x2 - x1) / length(x2 - x1) * (x2 - x1);
+    vec2 new_velocity_2 = v2 - mass_term_2 * interaction_term_2;
+    particles_.at(neighbor).SetVelocity(new_velocity_2);
+    return true;
+  }
+  return false;
+}
+
+bool ParticleContainer::ExecuteWallCollision(size_t index) {
+  auto position = particles_.at(index).GetPosition();
+  auto velocity = particles_.at(index).GetVelocity();
+  auto radius = particles_.at(index).GetRadius();
+
+  // Check each of the four walls for near or close collision and reverse velocity as necessary
+  if (position.x <= radius && velocity.x < 0) {
+    particles_.at(index).SetVelocity(velocity * vec2(-1, 1));
+  }
+  if (position.x >= width_ - radius && velocity.x > 0) {
+    particles_.at(index).SetVelocity(velocity * vec2(-1, 1));
+  }
+  if (position.y <= radius && velocity.y < 0) {
+    particles_.at(index).SetVelocity(velocity * vec2(1, -1));
+  }
+  if (position.y >= height_ - radius && velocity.y > 0) {
+    particles_.at(index).SetVelocity(velocity * vec2(1, -1));
+  }
+  return particles_.at(index).GetVelocity() != velocity;
 }
 
 }  // namespace idealgas
