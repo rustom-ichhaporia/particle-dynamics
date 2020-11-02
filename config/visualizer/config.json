@@ -16,32 +16,32 @@
     "particles": {
       "Big, Heavy Particle": {
         "particle count": 10, 
-        "min velocity": 2, 
-        "max velocity": 3, 
+        "min velocity": 1, 
+        "max velocity": 2, 
         "min mass": 500, 
         "max mass": 600,
-        "min radius": 70, 
-        "max radius": 70, 
+        "min radius": 60, 
+        "max radius": 60, 
         "color": "0xFFFFFF"
       },
       "Medium, Medium Particle": {
-        "particle count": 20, 
-        "min velocity": 2, 
-        "max velocity": 3, 
+        "particle count": 15, 
+        "min velocity": 1, 
+        "max velocity": 2, 
         "min mass": 10, 
         "max mass": 10,
-        "min radius": 35, 
-        "max radius": 35, 
+        "min radius": 40, 
+        "max radius": 40, 
         "color": "0xFFFFFF"
       }, 
       "Tiny, Speedy Particle": {
-        "particle count": 60, 
-        "min velocity": 2, 
-        "max velocity": 3, 
+        "particle count": 40, 
+        "min velocity": 1, 
+        "max velocity": 2, 
         "min mass": 2, 
         "max mass": 2, 
-        "min radius": 15, 
-        "max radius": 15, 
+        "min radius": 20, 
+        "max radius": 20, 
         "color": "0xFFFFFF"
       }
     }

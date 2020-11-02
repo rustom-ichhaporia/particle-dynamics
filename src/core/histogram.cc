@@ -29,6 +29,9 @@ using std::vector;
 
 namespace idealgas {
 
+Histogram::Histogram(const string& title, size_t bin_count)
+    : title_(title), bin_count_(bin_count) {}
+
 Histogram::Histogram(const string& title, size_t bin_count, size_t width,
                      size_t height, const vec2& offset, size_t stroke,
                      const ColorT<float>& stroke_color,
@@ -64,6 +67,66 @@ void Histogram::Draw() {
   DrawBins();
 
   DrawText();
+}
+
+void Histogram::Update(float value) {
+  values_.push_back(value);
+}
+
+void Histogram::CalculateFrequencies() {
+  if (values_.size() == 0) {
+    return;
+  }
+  // Clear bin vectors before each calculation
+  bin_heights_.clear();
+  bin_cutoffs_.clear();
+
+  // Order all values for sequential binning
+  sort(values_.begin(), values_.end());
+
+  float min_speed = values_.front();
+  float max_speed = values_.back();
+
+  if (min_speed == max_speed) {
+    vector<float> cutoffs(bin_count_, min_speed);
+    bin_cutoffs_ = cutoffs;
+    vector<float> heights(bin_count_, (int) values_.size() / min_speed);
+    bin_heights_ = heights;
+    return;
+  }
+
+  float bin_increment = (max_speed - min_speed) / bin_count_;
+  float bin_cutoff = bin_increment;
+
+  float sum = 0;
+
+  for (size_t value = 0; value < values_.size(); ++value) {
+    // If value is within bin, increment
+    if (values_.at(value) < min_speed + bin_cutoff) {
+      sum += 1;
+    } 
+    // Otherwise, shift to the next bin and redo value
+    else {
+      bin_cutoffs_.push_back(bin_cutoff);
+      bin_heights_.push_back(sum);
+      sum = 0;
+      bin_cutoff += bin_increment;
+      --value;
+    }
+  }
+}
+
+void Histogram::NormalizeBins() {
+  float max_bin = *max_element(bin_heights_.begin(), bin_heights_.end());
+
+  // Divide each by max element
+  for (size_t index = 0; index < bin_heights_.size(); ++index) {
+    bin_heights_.at(index) /= max_bin;
+  }
+}
+
+vector<float> Histogram::GetBinHeights() const {
+  return bin_heights_;
 }
 
 void Histogram::DrawFrame() {
@@ -149,52 +212,6 @@ void Histogram::DrawBins() {
 
     Rectf bounding_box(top_left, bottom_right);
     drawSolidRoundedRect(bounding_box, 1);
-  }
-}
-
-void Histogram::Update(float value) {
-  values_.push_back(value);
-}
-
-void Histogram::CalculateFrequencies() {
-  // Clear bin vectors before each calculation
-  bin_heights_.clear();
-  bin_cutoffs_.clear();
-
-  // Order all values for sequential binning
-  sort(values_.begin(), values_.end());
-
-  float min_speed = values_.front();
-  float max_speed = values_.back();
-
-  float bin_increment = (max_speed - min_speed) / bin_count_;
-  float bin_cutoff = bin_increment;
-
-  float sum = 0;
-
-  for (size_t value = 0; value < values_.size(); ++value) {
-    // If value is within bin, increment
-    if (values_.at(value) < min_speed + bin_cutoff) {
-      sum += 1;
-    } 
-    // Otherwise, shift to the next bin and redo value
-    else {
-      bin_cutoffs_.push_back(bin_cutoff);
-      bin_heights_.push_back(sum);
-      sum = 0;
-      bin_cutoff += bin_increment;
-      --value;
-    }
-  }
-}
-
-void Histogram::NormalizeBins() {
-  float max_bin = *max_element(bin_heights_.begin(), bin_heights_.end());
-
-  // Divide each by max element
-  
-  for (size_t index = 0; index < bin_heights_.size(); ++index) {
-    bin_heights_.at(index) /= max_bin;
   }
 }
 

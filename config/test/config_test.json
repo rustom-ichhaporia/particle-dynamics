@@ -1,0 +1,29 @@
+{
+    "window": {
+      "width": "1792",
+      "height": "1066",
+      "margin": "100",
+      "stroke": "6",
+      "background color": "0x505050",
+      "stroke color": "0x000000",
+      "text color": "0xFFBFBF",
+      "font": "IBM Plex Mono"
+    },
+    "histogram": {
+      "bin count": "2"
+    },
+    "container": {
+      "particles": {
+        "Solitary Particle": {
+          "particle count": 1, 
+          "min velocity": 1, 
+          "max velocity": 1, 
+          "min mass": 1, 
+          "max mass": 1,
+          "min radius": 1, 
+          "max radius": 1, 
+          "color": "0xFFFFFF"
+        }
+      }
+    }
+  }

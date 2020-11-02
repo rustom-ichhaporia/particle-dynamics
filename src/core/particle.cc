@@ -4,6 +4,10 @@ using ci::ColorT;
 
 namespace idealgas {
 
+Particle::Particle() {
+  
+}
+
 Particle::Particle(const string& name, const vec2& position,
                    const vec2& velocity, float mass, float radius,
                    const ColorT<float>& color)

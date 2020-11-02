@@ -29,25 +29,25 @@ namespace idealgas {
 
 IdealGasVisualizer::IdealGasVisualizer() {
   // Gets map of configuration variables read from JSON
-  unordered_map<string, string> size_config = container_.ConfigureSizes();
-  window_width_ = stoi(size_config["window width"]);
-  window_height_ = stoi(size_config["window height"]);
-  margin_ = stoi(size_config["margin"]);
-  stroke_ = stoi(size_config["stroke"]);
+  unordered_map<string, string> config = container_.Configure(config_path_);
+  window_width_ = stoi(config["window width"]);
+  window_height_ = stoi(config["window height"]);
+  margin_ = stoi(config["margin"]);
+  stroke_ = stoi(config["stroke"]);
 
   // Set box width and height to appropriate margins (not a magic number)
-  container_width_ = stoi(size_config["container width"]);
-  container_height_ = stoi(size_config["container height"]);
-  histogram_bin_count_ = stoi(size_config["histogram bin count"]);
+  container_width_ = stoi(config["container width"]);
+  container_height_ = stoi(config["container height"]);
+  histogram_bin_count_ = stoi(config["histogram bin count"]);
 
   // Set draw colors
-  background_color_ = ColorT<float>().hex(
-      uint32_t(stoull(size_config["background color"], 0, 16)));
+  background_color_ =
+      ColorT<float>().hex(uint32_t(stoull(config["background color"], 0, 16)));
   stroke_color_ =
-      ColorT<float>().hex(uint32_t(stoull(size_config["stroke color"], 0, 16)));
+      ColorT<float>().hex(uint32_t(stoull(config["stroke color"], 0, 16)));
   text_color_ =
-      ColorT<float>().hex(uint32_t(stoull(size_config["text color"], 0, 16)));
-  font_family_ = size_config["font"];
+      ColorT<float>().hex(uint32_t(stoull(config["text color"], 0, 16)));
+  font_family_ = config["font"];
 }
 
 void IdealGasVisualizer::setup() {
