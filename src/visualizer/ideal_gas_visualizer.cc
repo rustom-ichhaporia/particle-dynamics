@@ -119,7 +119,116 @@ void IdealGasVisualizer::keyDown(KeyEvent event) {
       }
       break;
     }
+    case KeyEvent::KEY_p: {
+      if (container_.GetTimeStep() > 0) {
+        container_.SetTimeStep(0);
+      } else {
+        container_.SetTimeStep(1);
+      }
+      break;
+    }
+    case KeyEvent::KEY_1: {
+      if (container_.GetParticleNames().size() < 1) {
+        break;
+      }
+      string name = container_.GetParticleNames().at(0);
+      HideParticles(name);
+      break;
+    }
+    case KeyEvent::KEY_2: {
+      if (container_.GetParticleNames().size() < 2) {
+        break;
+      }
+      string name = container_.GetParticleNames().at(1);
+      HideParticles(name);
+      break;
+    }
+    case KeyEvent::KEY_3: {
+      if (container_.GetParticleNames().size() < 3) {
+        break;
+      }
+      string name = container_.GetParticleNames().at(2);
+      HideParticles(name);
+      break;
+    }
+        case KeyEvent::KEY_4: {
+      if (container_.GetParticleNames().size() < 4) {
+        break;
+      }
+      string name = container_.GetParticleNames().at(3);
+      HideParticles(name);
+      break;
+    }
+        case KeyEvent::KEY_5: {
+      if (container_.GetParticleNames().size() < 5) {
+        break;
+      }
+      string name = container_.GetParticleNames().at(4);
+      HideParticles(name);
+      break;
+    }
+        case KeyEvent::KEY_6: {
+      if (container_.GetParticleNames().size() < 6) {
+        break;
+      }
+      string name = container_.GetParticleNames().at(5);
+      HideParticles(name);
+      break;
+    }
+    case KeyEvent::KEY_7: {
+      if (container_.GetParticleNames().size() < 7) {
+        break;
+      }
+      string name = container_.GetParticleNames().at(6);
+      HideParticles(name);
+      break;
+    }
+    case KeyEvent::KEY_8: {
+      if (container_.GetParticleNames().size() < 8) {
+        break;
+      }
+      string name = container_.GetParticleNames().at(7);
+      HideParticles(name);
+      break;
+    }
+    case KeyEvent::KEY_9: {
+      if (container_.GetParticleNames().size() < 9) {
+        break;
+      }
+      string name = container_.GetParticleNames().at(8);
+      HideParticles(name);
+      break;
+    }
+    //     case KeyEvent::KEY_3: {
+    //   if (container_.GetParticleNames().size() < 4) {
+    //     break;
+    //   }
+    //   string name = container_.GetParticleNames().at(3);
+    //   HideParticles(name);
+    //   break;
+    // }
+    case KeyEvent::KEY_r: {
+      auto combined = hidden_particles_;
+      for (auto& particle : container_.GetParticles()) {
+        combined.push_back(particle);
+      }
+      container_.SetParticles(combined);
+      hidden_particles_.clear();
+    }
   }
+}
+
+void IdealGasVisualizer::HideParticles(const string& name) {
+  vector<Particle> old_particles = container_.GetParticles();
+  vector<Particle> new_particles;
+  for (size_t index = 0; index < container_.GetParticles().size(); ++index) {
+    if (old_particles.at(index).GetName() == name) {
+      new_particles.push_back(old_particles.at(index));
+    } else {
+      hidden_particles_.push_back(old_particles.at(index));
+    }
+  }
+  container_.SetParticles(new_particles);
 }
 
 void IdealGasVisualizer::DrawContainer() {

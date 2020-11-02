@@ -83,7 +83,7 @@ TEST_CASE("Incrementation", "[initialize][increment]") {
   SECTION("Particle collisions") {
     SECTION("Valid collision") {
       ParticleContainer container;
-      Particle p1("Test 1", vec2(19.9, 20), vec2(0.1, 0), 1, 1,
+      Particle p1("Test 1", vec2(19.9, 20), vec2(0.1, 0), 2, 1,
                   ColorT<float>().hex(0xFFFFFF));
       Particle p2("Test 2", vec2(21.5, 21.4), vec2(-0.1, 0), 1, 1,
                   ColorT<float>().hex(0xFFFFFF));
@@ -128,12 +128,12 @@ TEST_CASE("Incrementation", "[initialize][increment]") {
 
       REQUIRE(p1_new.GetPosition().x == Approx(20).epsilon(0.01));
       REQUIRE(p1_new.GetPosition().y == Approx(19.9).epsilon(0.01));
-      REQUIRE(p1_new.GetVelocity().x == Approx(0.1).epsilon(0.01));
-      REQUIRE(p1_new.GetVelocity().y == Approx(0).epsilon(0.01));
+      REQUIRE(p1_new.GetVelocity().x == Approx(0.0333).epsilon(0.01));
+      REQUIRE(p1_new.GetVelocity().y == Approx(-0.06667).epsilon(0.01));
       REQUIRE(p2_new.GetPosition().x == Approx(21.4).epsilon(0.01));
       REQUIRE(p2_new.GetPosition().y == Approx(21.5).epsilon(0.01));
-      REQUIRE(p2_new.GetVelocity().x == Approx(-0.1).epsilon(0.01));
-      REQUIRE(p2_new.GetVelocity().y == Approx(0).epsilon(0.01));
+      REQUIRE(p2_new.GetVelocity().x == Approx(0.0333).epsilon(0.01));
+      REQUIRE(p2_new.GetVelocity().y == Approx(0.1333).epsilon(0.01));
     }
 
     SECTION("Prevention of sticky particles / displacement threshold") {
