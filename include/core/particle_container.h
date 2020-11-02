@@ -66,7 +66,14 @@ class ParticleContainer {
    *
    * @return vector<Particle>& the vector of particles in the container
    */
-  vector<Particle> GetParticles() const; 
+  vector<Particle>& GetParticles(); 
+
+  /**
+   * @brief Set the particles by a vector. 
+   * 
+   * @param particles a vector of Particle objects to reset
+   */
+  void SetParticles(const vector<Particle>& particles);
 
   /**
    * @brief Gets a reference to a vector of the particle type names.
@@ -74,6 +81,20 @@ class ParticleContainer {
    * @return the vector of particle type strings
    */
   vector<string> GetParticleNames() const;
+
+  /**
+   * @brief Gets the current time step of the object. 
+   * 
+   * @return float representing the time step
+   */
+  float GetTimeStep() const;
+
+  /**
+   * @brief Sets the time step of the container
+   * 
+   * @param time_step the float time step to set
+   */
+  void SetTimeStep(float time_step);
 
  private:
   // The maximum allowed radius of a particle

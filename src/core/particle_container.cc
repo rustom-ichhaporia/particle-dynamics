@@ -128,12 +128,24 @@ void ParticleContainer::Increment() {
   IncrementWallCollisions();
 }
 
-vector<Particle> ParticleContainer::GetParticles() const {
+vector<Particle>& ParticleContainer::GetParticles() {
   return particles_;
+}
+
+void ParticleContainer::SetParticles(const vector<Particle>& particles) {
+  particles_ = particles;
 }
 
 vector<string> ParticleContainer::GetParticleNames() const {
   return particle_names_;
+}
+
+float ParticleContainer::GetTimeStep() const {
+  return time_step_;
+}
+
+void ParticleContainer::SetTimeStep(float time_step) {
+  time_step_ = time_step;
 }
 
 void ParticleContainer::IncrementParticleCollisions() {
@@ -145,7 +157,7 @@ void ParticleContainer::IncrementParticleCollisions() {
 
   for (size_t base = 0; base < particles_.size(); ++base) {
     // Search only the first few particle pairings nearby, with no overlaps
-    size_t cutoff = base + particles_.size() / kNearbyLimit;
+    size_t cutoff = base + kNearbyLimit;
     // Prevent excess index
     if (cutoff > particles_.size() - 1) {
       cutoff = particles_.size();

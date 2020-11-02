@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
@@ -14,6 +15,7 @@ using idealgas::Histogram;
 using idealgas::ParticleContainer;
 using std::string;
 using std::unordered_map;
+using std::vector;
 
 namespace idealgas {
 
@@ -61,6 +63,13 @@ class IdealGasVisualizer : public App {
   void keyDown(KeyEvent event) override;
 
  private:
+  /**
+   * @brief Hides the particles of a certain index in the particle names. 
+   * 
+   * @param index the name of particle type to keep
+   */
+  void HideParticles(const string& name);
+
   /**
    * @brief Draws the frame of the container that bounds the particles.
    *
@@ -121,6 +130,8 @@ class IdealGasVisualizer : public App {
   // The particle container object contianing all of the particles and their
   // data
   ParticleContainer container_;
+  // The present particles that are currently hidden
+  vector<Particle> hidden_particles_;
 };
 
 }  // namespace idealgas
