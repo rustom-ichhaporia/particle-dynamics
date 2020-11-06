@@ -199,14 +199,6 @@ void IdealGasVisualizer::keyDown(KeyEvent event) {
       HideParticles(name);
       break;
     }
-    //     case KeyEvent::KEY_3: {
-    //   if (container_.GetParticleNames().size() < 4) {
-    //     break;
-    //   }
-    //   string name = container_.GetParticleNames().at(3);
-    //   HideParticles(name);
-    //   break;
-    // }
     case KeyEvent::KEY_r: {
       auto combined = hidden_particles_;
       for (auto& particle : container_.GetParticles()) {

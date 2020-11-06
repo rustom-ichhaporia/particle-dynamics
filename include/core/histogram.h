@@ -15,6 +15,11 @@ using std::vector;
 
 namespace idealgas {
 
+/**
+ * @brief The histogram class calculates the binnings for the speeds of the
+ * particles in the simulation and plots them in the Cinder app if desired.
+ *
+ */
 class Histogram {
  public:
   /**

@@ -16,6 +16,12 @@ using std::vector;
 
 namespace idealgas {
 
+/**
+ * @brief The ParticleContainer class holds all the logic behind the particle
+ * collisions with walls and other particles and manages the particles during
+ * each time increment.
+ *
+ */
 class ParticleContainer {
  public:
   /**
