@@ -9,6 +9,10 @@ using std::string;
 
 namespace idealgas {
 
+/**
+ * @brief The Particle class contains getters and setters for all the properties of a particle in the simulation. 
+ * 
+ */
 class Particle {
  public:
   Particle();

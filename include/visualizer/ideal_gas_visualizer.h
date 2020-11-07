@@ -19,6 +19,13 @@ using std::vector;
 
 namespace idealgas {
 
+/**
+ * @brief The IdealGasVisualizer functions as a driver for the visualization,
+ * calling the appropriate heartbeat functions for updating particles and
+ * collisions. It also implements some visualizer controls that can be accessed
+ * through the keyboard.
+ *
+ */
 class IdealGasVisualizer : public App {
  public:
   /**

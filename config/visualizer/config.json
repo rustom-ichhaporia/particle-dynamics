@@ -14,7 +14,7 @@
   },
   "container": {
     "particles": {
-      "Big, Heavy Particle": {
+      "Big, Slow Particle": {
         "particle count": 10, 
         "min velocity": 1, 
         "max velocity": 2, 
