@@ -46,7 +46,7 @@ std::unordered_map<string, string> ParticleContainer::Configure(const string& co
   height_ = stoi(visualizer_info["window height"]) -
             2 * stoi(visualizer_info["margin"]);
   visualizer_info["container height"] = std::to_string(height_);
-
+  
   visualizer_info["histogram bin count"] = config["histogram"]["bin count"];
 
   for (auto it = config["container"]["particles"].begin();
