@@ -3,9 +3,9 @@
 #include <string>
 #include <vector>
 
+#include "nlohmann/json.hpp"
 #include "cinder/gl/gl.h"
 #include "core/particle.h"
-#include "nlohmann/json.hpp"
 
 using glm::vec2;
 using nlohmann::json;

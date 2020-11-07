@@ -136,9 +136,10 @@ void ParticleContainer::IncrementParticleCollisions() {
   // First sort particles for more efficient searching
   std::sort(particles_.begin(), particles_.end(),
        [](const Particle& lhs, const Particle& rhs) {
-         return lhs.GetPosition().x < rhs.GetPosition().x;
+         if (lhs.GetPosition().x != rhs.GetPosition().x) { return lhs.GetPosition().x < rhs.GetPosition().x; }
+         else { return lhs.GetPosition().y < rhs.GetPosition().y; }
        });
-
+    
   for (size_t base = 0; base < particles_.size(); ++base) {
     // Search only the first few particle pairings nearby, with no overlaps
     size_t cutoff = base + kNearbyLimit;
