@@ -15,10 +15,10 @@
   "container": {
     "particles": {
       "Big, Slow Particle": {
-        "particle count": 10,
-        "min velocity": 1,
-        "max velocity": 2,
-        "min mass": 500,
+        "particle count": 10, 
+        "min velocity": 1, 
+        "max velocity": 2, 
+        "min mass": 500, 
         "max mass": 600,
         "min radius": 60,
         "max radius": 60,
