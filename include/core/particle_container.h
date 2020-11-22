@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "../build/_deps/json-src/include/nlohmann/json.hpp"
+#include "nlohmann/json.hpp"
 #include "cinder/gl/gl.h"
 #include "core/particle.h"
 

@@ -49,7 +49,9 @@ list( APPEND CINDER_INCLUDE_SYSTEM_PRIVATE ${Boost_INCLUDE_DIRS} )
 get_filename_component(CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../" ABSOLUTE)
 get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
 
+include_directories("build/_deps/json-src/include")
 include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
+
 
 list(APPEND CORE_SOURCE_FILES   
     src/core/particle_container.cc

@@ -87,8 +87,11 @@ TEST_CASE("Incrementation", "[initialize][increment]") {
                   ColorT<float>().hex(0xFFFFFF));
       Particle p2("Test 2", vec2(21.5, 21.4), vec2(-0.1, 0), 1, 1,
                   ColorT<float>().hex(0xFFFFFF));
+      Particle p3("Test 3", vec2(40, 40), vec2(0, 0), 2, 2,
+                  ColorT<float>().hex(0xFFFFFF));
       container.InitializeParticle(p1);
       container.InitializeParticle(p2);
+      container.InitializeParticle(p3);
       container.Increment();
 
       auto particles = container.GetParticles();
@@ -134,6 +137,10 @@ TEST_CASE("Incrementation", "[initialize][increment]") {
       REQUIRE(p2_new.GetPosition().y == Approx(21.5).epsilon(0.01));
       REQUIRE(p2_new.GetVelocity().x == Approx(0.0333).epsilon(0.01));
       REQUIRE(p2_new.GetVelocity().y == Approx(0.1333).epsilon(0.01));
+      REQUIRE(container.GetParticles()[2].GetPosition().x == Approx(40).epsilon(0.0001));
+      REQUIRE(container.GetParticles()[2].GetPosition().y == Approx(40).epsilon(0.0001));
+      REQUIRE(container.GetParticles()[2].GetVelocity().y == Approx(0).epsilon(0.0001));
+      REQUIRE(container.GetParticles()[2].GetVelocity().y == Approx(0).epsilon(0.0001));    
     }
 
     SECTION("Prevention of sticky particles / displacement threshold") {
@@ -177,7 +184,7 @@ TEST_CASE("Incrementation", "[initialize][increment]") {
   }
 
   SECTION("Wall collisions") {
-    SECTION("Valid wall bounce") {
+    SECTION("Valid wall top") {
       ParticleContainer container;
 
       Particle p1("Test 1", vec2(2, 1), vec2(0, -1), 1, 1,
@@ -202,9 +209,105 @@ TEST_CASE("Incrementation", "[initialize][increment]") {
       // Increment again for second check
       
       REQUIRE(p1_new.GetPosition().x == Approx(2).epsilon(0.01));
-      REQUIRE(p1_new.GetPosition().y == Approx(3).epsilon(0.01));
+      REQUIRE(p1_new.GetPosition().y == Approx(1).epsilon(0.01));
       REQUIRE(p1_new.GetVelocity().x == Approx(0).epsilon(0.01));
-      REQUIRE(p1_new.GetVelocity().y == Approx(1).epsilon(0.01));
+      REQUIRE(p1_new.GetVelocity().y == Approx(-1).epsilon(0.01));
+    }
+
+    SECTION("Valid wall bottom") {
+      ParticleContainer container;
+      container.Configure("../../../../../../config/test/config_test.json");
+      container.SetParticles(vector<Particle>());
+
+      Particle p1("Test 1", vec2(2, 99), vec2(0, 1), 1, 1,
+                  ColorT<float>().hex(0xFFFFFF));
+
+      container.InitializeParticle(p1);
+      container.Increment();
+
+      auto particles = container.GetParticles();
+      Particle p1_new = particles[0];
+
+      REQUIRE(p1_new.GetPosition().x == Approx(2).epsilon(0.01));
+      REQUIRE(p1_new.GetPosition().y == Approx(98).epsilon(0.01));
+      REQUIRE(p1_new.GetVelocity().x == Approx(0).epsilon(0.01));
+      REQUIRE(p1_new.GetVelocity().y == Approx(-1).epsilon(0.01));
+
+      container.Increment();
+
+      particles = container.GetParticles();
+      p1_new = particles[0];
+
+      // Increment again for second check
+      
+      REQUIRE(p1_new.GetPosition().x == Approx(2).epsilon(0.01));
+      REQUIRE(p1_new.GetPosition().y == Approx(97).epsilon(0.01));
+      REQUIRE(p1_new.GetVelocity().x == Approx(0).epsilon(0.01));
+      REQUIRE(p1_new.GetVelocity().y == Approx(-1).epsilon(0.01));
+    }
+
+    SECTION("Valid wall left") {
+      ParticleContainer container;
+      container.Configure("../../../../../../config/test/config_test.json");
+      container.SetParticles(vector<Particle>());
+
+      Particle p1("Test 1", vec2(1, 30), vec2(-1, 0), 1, 1,
+                  ColorT<float>().hex(0xFFFFFF));
+
+      container.InitializeParticle(p1);
+      container.Increment();
+
+      auto particles = container.GetParticles();
+      Particle p1_new = particles[0];
+
+      REQUIRE(p1_new.GetPosition().x == Approx(2).epsilon(0.001));
+      REQUIRE(p1_new.GetPosition().y == Approx(30).epsilon(0.001));
+      REQUIRE(p1_new.GetVelocity().x == Approx(1).epsilon(0.001));
+      REQUIRE(p1_new.GetVelocity().y == Approx(0).epsilon(0.001));
+
+      container.Increment();
+
+      particles = container.GetParticles();
+      p1_new = particles[0];
+
+      // Increment again for second check
+      
+      REQUIRE(p1_new.GetPosition().x == Approx(3).epsilon(0.001));
+      REQUIRE(p1_new.GetPosition().y == Approx(30).epsilon(0.001));
+      REQUIRE(p1_new.GetVelocity().x == Approx(1).epsilon(0.001));
+      REQUIRE(p1_new.GetVelocity().y == Approx(0).epsilon(0.001));
+    }
+    
+    SECTION("Valid wall right") {
+      ParticleContainer container;
+      container.Configure("../../../../../../config/test/config_test.json");
+      container.SetParticles(vector<Particle>());
+
+      Particle p1("Test 1", vec2(200, 30), vec2(1, 0), 1, 1,
+                  ColorT<float>().hex(0xFFFFFF));
+
+      container.InitializeParticle(p1);
+      container.Increment();
+
+      auto particles = container.GetParticles();
+      Particle p1_new = particles[0];
+
+      REQUIRE(p1_new.GetPosition().x == Approx(199).epsilon(0.001));
+      REQUIRE(p1_new.GetPosition().y == Approx(30).epsilon(0.001));
+      REQUIRE(p1_new.GetVelocity().x == Approx(-1).epsilon(0.001));
+      REQUIRE(p1_new.GetVelocity().y == Approx(0).epsilon(0.001));
+
+      container.Increment();
+
+      particles = container.GetParticles();
+      p1_new = particles[0];
+
+      // Increment again for second check
+      
+      REQUIRE(p1_new.GetPosition().x == Approx(198).epsilon(0.001));
+      REQUIRE(p1_new.GetPosition().y == Approx(30).epsilon(0.001));
+      REQUIRE(p1_new.GetVelocity().x == Approx(-1).epsilon(0.001));
+      REQUIRE(p1_new.GetVelocity().y == Approx(0).epsilon(0.001));
     }
 
     SECTION("Prevention of particles sticking to wall") {

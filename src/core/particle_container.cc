@@ -1,50 +1,34 @@
 #include "core/particle_container.h"
 
 #include <algorithm>
-#include <any>
 #include <fstream>
 #include <iostream>
 #include <random>
 #include <string>
 
-#include "../build/_deps/json-src/include/nlohmann/json.hpp"
 #include "cinder/gl/gl.h"
 #include "core/particle.h"
+#include "nlohmann/json.hpp"
 
 using ci::ColorT;
-using glm::distance;
 using glm::dot;
 using glm::vec2;
 using idealgas::Particle;
 using idealgas::ParticleContainer;
-using nlohmann::json;
-using std::any;
-using std::ifstream;
-using std::invalid_argument;
-using std::map;
-using std::mt19937;
-using std::pow;
-using std::random_device;
-using std::sort;
 using std::stoi;
-using std::stoull;
 using std::string;
-using std::to_string;
-using std::uniform_int_distribution;
-using std::uniform_real_distribution;
-using std::unordered_map;
 using std::vector;
 
 namespace idealgas {
 
-unordered_map<string, string> ParticleContainer::Configure(const string& config_path) {
+std::unordered_map<string, string> ParticleContainer::Configure(const string& config_path) {
   // Read in JSON configuration file information
-  ifstream input(config_path);
-  json config;
+  std::ifstream input(config_path);
+  nlohmann::json config;
   input >> config;
 
   // Create mapping between variable names and values
-  unordered_map<string, string> visualizer_info;
+  std::unordered_map<string, string> visualizer_info;
 
   visualizer_info["window width"] = config["window"]["width"];
   visualizer_info["window height"] = config["window"]["height"];
@@ -58,18 +42,18 @@ unordered_map<string, string> ParticleContainer::Configure(const string& config_
   // Cast width and height to strings, others are cast in visualizer class
   width_ = stoi(visualizer_info["window width"]) * 3 / 4 -
            stoi(visualizer_info["margin"]);
-  visualizer_info["container width"] = to_string(width_);
+  visualizer_info["container width"] = std::to_string(width_);
   height_ = stoi(visualizer_info["window height"]) -
             2 * stoi(visualizer_info["margin"]);
-  visualizer_info["container height"] = to_string(height_);
-
+  visualizer_info["container height"] = std::to_string(height_);
+  
   visualizer_info["histogram bin count"] = config["histogram"]["bin count"];
 
   for (auto it = config["container"]["particles"].begin();
        it != config["container"]["particles"].end(); ++it) {
     // Iterating through, initialie particles of each type
     ColorT<float> color =
-        ColorT<float>().hex(stoull(string(it.value()["color"]), 0, 16));
+        ColorT<float>().hex(std::stoull(string(it.value()["color"]), 0, 16));
 
     particle_names_.push_back(it.key());
 
@@ -89,25 +73,25 @@ void ParticleContainer::InitializeParticles(
     size_t max_radius, const ColorT<float>& color) {
   // Check if radius argument is too large for visualizer
   if (max_radius > kRadiusLimit) {
-    throw invalid_argument(
-        ("The maximum allowed radius is: " + to_string(kRadiusLimit) +
+    throw std::invalid_argument(
+        ("The maximum allowed radius is: " + std::to_string(kRadiusLimit) +
          ". Please edit your configuration file."));
   }
 
   // Used to obtain a seed for the random number engine
-  random_device rd;   
+  std::random_device rd;   
   // Gets random position from distribution
-  mt19937 gen(rd());  
+  std::mt19937 gen(rd());  
   // Distribution of possible x values
-  uniform_int_distribution<> width_dist(0, width_);
+  std::uniform_int_distribution<> width_dist(0, width_);
   // Distribution of y values
-  uniform_int_distribution<> height_dist(0, height_);
+  std::uniform_int_distribution<> height_dist(0, height_);
   // Distribution of velocities
-  uniform_real_distribution<> velocity_dist(min_velocity, max_velocity);
+  std::uniform_real_distribution<> velocity_dist(min_velocity, max_velocity);
   // Distribution of masses
-  uniform_real_distribution<> mass_dist(min_mass, max_mass);
+  std::uniform_real_distribution<> mass_dist(min_mass, max_mass);
   // Distribution of radii
-  uniform_real_distribution<> radius_dist(min_radius, max_radius);
+  std::uniform_real_distribution<> radius_dist(min_radius, max_radius);
 
   for (size_t i = 0; i < particle_count; ++i) {
     // Create particle and add it to vector
@@ -150,11 +134,12 @@ void ParticleContainer::SetTimeStep(float time_step) {
 
 void ParticleContainer::IncrementParticleCollisions() {
   // First sort particles for more efficient searching
-  sort(particles_.begin(), particles_.end(),
+  std::sort(particles_.begin(), particles_.end(),
        [](const Particle& lhs, const Particle& rhs) {
-         return lhs.GetPosition().x < rhs.GetPosition().x;
+         if (lhs.GetPosition().x != rhs.GetPosition().x) { return lhs.GetPosition().x < rhs.GetPosition().x; }
+         else { return lhs.GetPosition().y < rhs.GetPosition().y; }
        });
-
+    
   for (size_t base = 0; base < particles_.size(); ++base) {
     // Search only the first few particle pairings nearby, with no overlaps
     size_t cutoff = base + kNearbyLimit;
@@ -196,7 +181,7 @@ bool ParticleContainer::ExecuteParticleCollision(size_t base, size_t neighbor) {
   vec2 v2 = p2.GetVelocity();
   float m1 = p1.GetMass();
   float m2 = p2.GetMass();
-  float distance_between = distance(x1, x2);
+  float distance_between = glm::distance(x1, x2);
   float displacement_threshold = dot(v1 - v2, x1 - x2);
 
   // Use directional check to ensure that particles won't get stuck or frozen
